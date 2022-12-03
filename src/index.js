@@ -1,30 +1,18 @@
 import './css/styles.css';
-const debounce = require('lodash.debounce');
-// import debounce from 'lodash.debounce';
+import API from './fetchCountries';
+import getRefs from './get-refs';
 
-const refs = {
-  input: document.querySelector('#search-box'),
-};
+// const debounce = require('lodash.debounce');
+import debounce from 'lodash.debounce';
 
+const refs = getRefs();
 console.log(refs.input);
 
 const DEBOUNCE_DELAY = 300;
 
-// const URL = 'https://restcountries.com/v2/name/poland';
-// prettier-ignore
-const URL = 'https://restcountries.com/v2/name/poland?fields=name,capital,population,flags,languages';
-
-fetchCountriesByName();
-
-function fetchCountriesByName() {
-  fetch(URL)
-    .then(response => {
-      return response.json();
-    })
-    .then(country => {
-      console.log(country[0].flags.svg);
-    });
-}
+API.fetchCountries().then(country => {
+  console.log(country[0].flags.svg);
+});
 
 refs.input.addEventListener('input', debounce(pushData, DEBOUNCE_DELAY));
 
