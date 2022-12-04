@@ -8,7 +8,6 @@ import debounce from 'lodash.debounce';
 import Handlebars from 'handlebars';
 
 import Notiflix from 'notiflix';
-import fetchCountries from './fetchCountries';
 
 const DEBOUNCE_DELAY = 300;
 const countryCard = getTemp();
@@ -34,10 +33,6 @@ const result = template(data);
 console.log(refs);
 refs.list.innerHTML = result;
 
-// API.fetchCountries().then(country => {
-//   console.log(country[0].flags.svg);
-// });
-
 refs.input.addEventListener('input', debounce(onUserRequest, DEBOUNCE_DELAY));
 
 function onUserRequest(event) {
@@ -48,15 +43,28 @@ function onUserRequest(event) {
   const name = event.target.value.trim().toLowerCase();
 
   API.fetchCountries(name)
-    .then(country => {
-      console.log(`this is THEN`);
-      console.log(country);
+    .then(countries => {
+      if (countries.length > 10) {
+        return Notiflix.Notify.info(
+          'Too many matches found. Please enter a more specific name.'
+        );
+      }
+
+      if (countries.length >= 2 && countries.length <= 10) {
+        return countries.forEach(country => {
+          console.log(country.name);
+        });
+      }
+
+      if (countries.length === 1) {
+        return console.log(`we find just ${countries[0].name}`);
+      }
     })
     .catch(error => {
-      console.log(`this is CATCH`);
+      Notiflix.Notify.failure('bad search query');
     })
     .finally(() => {
-      console.log(`this is FINALLY`);
-      refs.input.clear();
+      // console.log(`this is FINALLY`);
+      // refs.input.value = '';
     });
 }
