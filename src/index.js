@@ -46,23 +46,17 @@ function onUserRequest(event) {
     return;
   }
   const name = event.target.value.trim().toLowerCase();
+
   API.fetchCountries(name)
     .then(country => {
-      // console.log(country[0].flags.svg);
-      console.log(country.length);
+      console.log(`this is THEN`);
+      console.log(country);
     })
-    .catch(error => console.log(error));
-
-  // console.log(name);
+    .catch(error => {
+      console.log(`this is CATCH`);
+    })
+    .finally(() => {
+      console.log(`this is FINALLY`);
+      refs.input.clear();
+    });
 }
-
-API.fetchCountries('sw')
-  .then(country => {
-    console.log(`this is THEN`);
-    console.log(country);
-  })
-  .catch(x => {
-    console.log(`this is CATCH`);
-    console.log(`error`);
-  })
-  .finally(() => console.log(`this is FINALLY`));

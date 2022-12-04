@@ -7,7 +7,8 @@ function fetchCountries(name) {
       return response.json();
     }
 
-    return new Error(`Houston, we have a ${response.status} problem`);
+    // return new Error(`Houston, we have a ${response.status} problem`);
+    return error();
   });
 }
 
