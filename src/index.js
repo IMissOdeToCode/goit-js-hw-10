@@ -8,8 +8,11 @@ import debounce from 'lodash.debounce';
 import Handlebars from 'handlebars';
 
 import Notiflix from 'notiflix';
+import fetchCountries from './fetchCountries';
 
+const DEBOUNCE_DELAY = 300;
 const countryCard = getTemp();
+const refs = getRefs();
 
 const template = Handlebars.compile(countryCard);
 const data = {
@@ -20,7 +23,6 @@ const data = {
     { name: 'Sally', age: '4' },
   ],
 };
-
 const result = template(data);
 
 // import { Notify } from 'notiflix/build/notiflix-notify-aio';
@@ -29,17 +31,38 @@ const result = template(data);
 // Notiflix.Notify.warning('Memento te hominem esse');
 // Notiflix.Notify.info('Cogito ergo sum');
 
-const refs = getRefs();
 console.log(refs);
 refs.list.innerHTML = result;
-const DEBOUNCE_DELAY = 300;
 
-API.fetchCountries().then(country => {
-  console.log(country[0].flags.svg);
-});
+// API.fetchCountries().then(country => {
+//   console.log(country[0].flags.svg);
+// });
 
-refs.input.addEventListener('input', debounce(pushData, DEBOUNCE_DELAY));
+refs.input.addEventListener('input', debounce(onUserRequest, DEBOUNCE_DELAY));
 
-function pushData(event) {
-  console.log(event.target.value);
+function onUserRequest(event) {
+  if (event.target.value === '') {
+    Notiflix.Notify.failure('Search field is empty');
+    return;
+  }
+  const name = event.target.value.trim().toLowerCase();
+  API.fetchCountries(name)
+    .then(country => {
+      // console.log(country[0].flags.svg);
+      console.log(country.length);
+    })
+    .catch(error => console.log(error));
+
+  // console.log(name);
 }
+
+API.fetchCountries('sw')
+  .then(country => {
+    console.log(`this is THEN`);
+    console.log(country);
+  })
+  .catch(x => {
+    console.log(`this is CATCH`);
+    console.log(`error`);
+  })
+  .finally(() => console.log(`this is FINALLY`));

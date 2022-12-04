@@ -1,8 +1,14 @@
-function fetchCountries() {
+function fetchCountries(name) {
   // prettier-ignore
-  const URL = 'https://restcountries.com/v2/name/Poland?fields=name,capital,population,flags,languages';
-  // prettier-ignore
-  return fetch(URL).then(response => response.json());
+  const URL = `https://restcountries.com/v2/name/${name}?fields=name,capital,population,flags,languages`;
+
+  return fetch(URL).then(response => {
+    if (response.ok) {
+      return response.json();
+    }
+
+    return new Error(`Houston, we have a ${response.status} problem`);
+  });
 }
 
 export default { fetchCountries };
